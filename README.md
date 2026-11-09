@@ -1,2 +1,3 @@
-# winter-preseason-cup
-Sito della Winter Preseason Cup · calendario, risultati e classifiche
+# Winter Preseason Cup
+
+Sito della Winter Preseason Cup · calendario, risultati e classifiche.

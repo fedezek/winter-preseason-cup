@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1829">
+  <meta name="description" content="Calendario, risultati e classifiche della Winter Preseason Cup, il torneo scolastico di calcio al CIT Turin.">
+  <meta property="og:title" content="Winter Preseason Cup">
+  <meta property="og:description" content="Segui calendario, risultati e classifiche del torneo scolastico di calcio al CIT Turin.">
+  <meta property="og:type" content="website">
+  <title>Winter Preseason Cup | Calendario e risultati</title>
+  <link rel="icon" type="image/webp" href="assets/winter.webp">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="tournament.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#contenuto">Vai al contenuto</a>
+  <header class="top">
+    <div class="wrap bar">
+      <a class="brand" href="#" aria-label="Winter Preseason Cup, inizio pagina">
+        <span class="brand-mark" data-logo></span>
+        <span>WINTER<br>PRESEASON CUP</span>
+      </a>
+      <nav aria-label="Navigazione principale">
+        <a href="#partite">Partite</a><a href="#gironi">Gironi</a><a href="#info">Info</a>
+      </nav>
+    </div>
+  </header>
+  <main id="contenuto">
+    <section class="hero" aria-labelledby="title">
+      <div class="pitch" aria-hidden="true"><i></i></div>
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="ice-dot"></span> TORINO <span class="divider"></span> STAGIONE 2026/27</p>
+          <h1 id="title"><span>Winter</span><span>Preseason Cup</span></h1>
+          <p class="hero-desc">Il torneo di calcio tra sei scuole di Torino.</p>
+          <a class="button hero-action" href="#partite">Vedi il calendario <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="featured" id="featured">
+          <p class="eyebrow">PROSSIMA PARTITA</p>
+          <p>Alfieri FC – Galfer FC<br>22 novembre · 20:00</p>
+        </div>
+      </div>
+    </section>
+    <div class="wrap main-wrap">
+      <section class="section" id="partite">
+        <div class="section-heading">
+          <div><p class="eyebrow section-label">01 / PROGRAMMA</p><h2>Calendario e risultati</h2></div>
+          <div class="filters" role="group" aria-label="Filtra le partite">
+            <button type="button" data-filter="all" aria-pressed="true">Tutte</button>
+            <button type="button" data-filter="groups" aria-pressed="false">Gironi</button>
+            <button type="button" data-filter="finals" aria-pressed="false">Finali</button>
+            <button type="button" data-filter="results" aria-pressed="false">Risultati</button>
+          </div>
+        </div>
+        <div id="match-list" aria-live="polite"></div>
+        <noscript><p>Attiva JavaScript per consultare il calendario completo e le classifiche.</p></noscript>
+      </section>
+      <section class="section" id="gironi">
+        <div class="section-heading">
+          <div><p class="eyebrow section-label">02 / CLASSIFICHE</p><h2>Gironi e squadre</h2></div>
+          <p class="section-aside" id="table-note"></p>
+        </div>
+        <div class="tables" id="tables"></div>
+      </section>
+      <section class="section" id="info">
+        <div class="section-heading">
+          <div><p class="eyebrow section-label">03 / IL TORNEO</p><h2>Informazioni</h2></div>
+        </div>
+        <div class="info-grid">
+          <article class="info-card venue">
+            <p class="eyebrow">DOVE SI GIOCA</p>
+            <h3>CIT Turin LDE</h3>
+            <p>Corso Ferrucci 63/A, Torino</p>
+            <a class="text-link" href="https://www.google.com/maps/search/?api=1&amp;query=Corso%20Ferrucci%2063%2FA%2C%20Torino" target="_blank" rel="noopener">Apri la mappa <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="info-card">
+            <p class="eyebrow">COME FUNZIONA</p>
+            <h3>Due gironi da tre</h3>
+            <p>Ogni squadra gioca due partite nel girone. Le prime si sfidano per il titolo, le seconde per il terzo posto.</p>
+            <p class="small">Le finali si giocano domenica 10 gennaio 2027.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="wrap footer-row"><strong>Winter Preseason Cup</strong><span>Torino · Edizione 2026/27</span><button type="button" id="share">Condividi <span aria-hidden="true">↗</span></button></div>
+    <p class="share-status" id="share-status" role="status"></p>
+  </footer>
+</body>
+</html>
