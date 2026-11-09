@@ -140,7 +140,8 @@ function renderTables() {
       const rank = started ? row.rank : "–";
       const diff = row.diff > 0 ? "+" + row.diff : row.diff;
       return '<tr><td>' + rank + '</td><td>'
-        + teamMarkup({ ...teams[row.id], id: row.id }, "team")
+        + '<a class="roster-link" href="rose.html#' + row.id + '" aria-label="Rosa ' + teams[row.id].name + '">'
+        + teamMarkup({ ...teams[row.id], id: row.id }, "team") + '</a>'
         + '</td><td>' + row.played + '</td><td>' + diff + '</td><td><strong>'
         + row.points + '</strong></td></tr>';
     }).join("");
