@@ -168,5 +168,4 @@ window.cupPublic.response.then((published) => {
   renderFeature();
   renderMatches(filters.find((item) => item.getAttribute("aria-pressed") === "true")?.dataset.filter ?? "all");
   renderTables();
-  window.cupPublic.renderStats(published, teams);
 });

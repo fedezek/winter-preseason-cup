@@ -20,13 +20,7 @@
 .cup-match-details{border-top:1px solid var(--line);padding:.55rem .85rem;font-size:.9rem;background:#fff}
 .cup-match-details summary{cursor:pointer;font-weight:750}
 .cup-match-details li{margin-block:.3rem}
-.cup-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:12px}
-.cup-stat-card{padding:.85rem 1rem;border:1px solid var(--line);border-radius:12px;background:#fff}
-.cup-stat-card h3{font-size:1rem;margin:0 0 .5rem}
-.cup-stat-card ul{padding-inline-start:1.25rem;margin-block:.35rem}
-.cup-stat-card li{margin-block:.25rem}
-.cup-stat-card a,.cup-match-details a{text-decoration:underline;text-underline-offset:2px}
-.cup-roster-stat{margin:.6rem 0 0;padding:.6rem .8rem;background:white;border:1px solid var(--line);border-radius:8px}
+.cup-match-details a{text-decoration:underline;text-underline-offset:2px}
 @media(max-width:400px){.cup-grid{grid-template-columns:minmax(0,1fr)}}
 #gironi .table-card{overflow-x:auto}
 #gironi .table-card table{min-width:340px}
@@ -37,4 +31,3 @@
   #gironi .team{gap:3px;overflow-wrap:anywhere}
   #gironi .team .badge{width:20px;height:20px}
 }
-.cup-roster-stat{color:var(--ink);margin:.65rem auto 0}

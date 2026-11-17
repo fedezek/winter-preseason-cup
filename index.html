@@ -17,6 +17,7 @@
   <script defer src="tournament.js"></script>
   <script defer src="standings.js"></script>
   <script defer src="app.js"></script>
+  <link rel="stylesheet" href="statistics.css">
 </head>
 <body>
   <a class="skip" href="#contenuto">Vai al contenuto</a>
@@ -27,7 +28,7 @@
         <span>WINTER<br>PRESEASON CUP</span>
       </a>
       <nav aria-label="Navigazione principale">
-        <a href="#partite">Partite</a><a href="#gironi">Gironi</a><a href="rose.html">Rose</a><a href="#info">Info</a><a href="#contatti">Contatti</a>
+        <a href="#partite">Partite</a><a href="#gironi">Gironi</a><a href="rose.html">Rose</a><a href="statistiche.html">Statistiche</a><a href="#info">Info</a><a href="#contatti">Contatti</a>
       </nav>
     </div>
   </header>
@@ -68,9 +69,9 @@
         </div>
         <div class="tables" id="tables"></div>
       </section>
-      <section class="section" id="statistiche" aria-labelledby="statistiche-title" hidden>
-        <div class="section-heading"><h2 id="statistiche-title">Statistiche</h2></div>
-        <div class="cup-stats"></div>
+      <section class="section stats-panel stats-home" id="statistiche" aria-labelledby="statistiche-title">
+        <h2 id="statistiche-title">Statistiche del torneo</h2>
+        <a class="stats-action" href="statistiche.html">Apri statistiche <span aria-hidden="true">&nbsp;↗</span></a>
       </section>
       <section class="section" id="info">
         <div class="section-heading">

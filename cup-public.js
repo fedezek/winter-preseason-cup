@@ -46,52 +46,5 @@
     return panel;
   }
 
-  function renderStats(value, teams) {
-    const section = document.querySelector("#statistiche");
-    if (!section || !Object.keys(value.reports).length) return;
-    const grid = section.querySelector(".cup-stats");
-    function card(title, rows) {
-      const article = node("article");
-      article.className = "cup-stat-card";
-      const list = node("ul");
-      list.replaceChildren(...rows);
-      article.append(node("h3", title), rows.length ? list : node("p", "Nessun evento registrato."));
-      return article;
-    }
-    const players = value.stats.players;
-    function leaders(metric, text) {
-      return players.filter((row) => metric(row) > 0).sort((a, b) => metric(b) - metric(a) || a.name.localeCompare(b.name, "it"))
-        .map((row) => {
-          const li = node("li");
-          li.append(rosterLink(row.team, row.name, row.id), " · ", (teams[row.team]?.name ?? row.team), " · ", text(row));
-          return li;
-        });
-    }
-    const teamRows = Object.entries(value.stats.teams).map(([id, row]) => {
-      const li = node("li");
-      const form = row.form.map(({ goals, against }) => goals > against ? "V" : goals === against ? "N" : "P");
-      li.append(rosterLink(id, teams[id].name), " · " + row.played + " PG · " + row.goals + " GF · " + row.against
-        + " GS" + (form.length ? " · " + form.join(" ") : ""));
-      return li;
-    });
-    grid.replaceChildren(
-      card("Marcatori", leaders((row) => row.goals, (row) => row.goals + (row.penalties ? " (" + row.penalties + " rig.)" : ""))),
-      card("Assist", leaders((row) => row.assists, (row) => String(row.assists))),
-      card("Disciplina", leaders((row) => row.red * 1000 + row.yellow, (row) => row.yellow + " gialli · " + row.red + " rossi")),
-      card("Squadre", teamRows),
-    );
-    section.hidden = false;
-  }
-
-  const playerId = new URL(location.href).searchParams.get("giocatore");
-  if (playerId) response.then((value) => {
-    const row = value?.stats.players.find((item) => item.id === playerId);
-    const anchor = document.querySelector(".roster-hero .wrap") || document.querySelector("#roster-title")?.parentElement;
-    if (!row || !anchor) return;
-    const div = node("p", row.name + " · " + row.goals + " gol · " + row.assists + " assist · "
-      + row.yellow + " gialli · " + row.red + " rossi");
-    div.className = "wrap cup-roster-stat";
-    anchor.after(div);
-  });
-  window.cupPublic = { response, details, renderStats };
+  window.cupPublic = { response, details };
 })();
