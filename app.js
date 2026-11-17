@@ -15,64 +15,16 @@ function formatDate(date, long = false) {
   return long ? weekdays.format(day) + " " + label + " " + day.getUTCFullYear() : label;
 }
 
-function standings(group) {
-  const groupMatches = matches.filter((match) => match.group === group);
-  const rows = Object.entries(teams).filter(([, team]) => team.group === group)
-    .map(([id]) => ({ id, played: 0, points: 0, goals: 0, against: 0, red: 0, yellow: 0 }));
-  const byId = new Map(rows.map((row) => [row.id, row]));
-  for (const match of groupMatches.filter((game) => game.score)) {
-    match.teams.forEach((id, i) => {
-      const row = byId.get(id);
-      const own = match.score[i];
-      const other = match.score[1 - i];
-      row.played += 1;
-      row.goals += own;
-      row.against += other;
-      row.points += own === other ? 1 : own > other ? 3 : 0;
-      row.red = match.red && row.red !== null ? row.red + match.red[i] : null;
-      row.yellow = match.yellow && row.yellow !== null ? row.yellow + match.yellow[i] : null;
-    });
-  }
-  rows.forEach((row) => { row.diff = row.goals - row.against; });
-  const complete = groupMatches.every((match) => match.score);
-  // Separate tied groups at each criterion. An unknown card count leaves the
-  // entire tied subset unresolved rather than ranking only the known rows.
-  const shootout = tournament.shootoutOrder[group];
-  const criteria = [
-    (row) => row.points, (row) => row.diff, (row) => row.goals,
-    (row) => row.red === null ? null : -row.red,
-    (row) => row.yellow === null ? null : -row.yellow,
-    (row) => complete && shootout.includes(row.id) ? -shootout.indexOf(row.id) : null,
-  ];
-  function orderTies(tied, criterion) {
-    if (tied.length < 2 || criterion === criteria.length) return [tied];
-    const value = criteria[criterion];
-    if (tied.some((row) => value(row) === null)) return [tied];
-    const buckets = new Map();
-    tied.forEach((row) => {
-      const key = value(row);
-      if (!buckets.has(key)) buckets.set(key, []);
-      buckets.get(key).push(row);
-    });
-    return [...buckets.keys()].sort((a, b) => b - a)
-      .flatMap((key) => orderTies(buckets.get(key), criterion + 1));
-  }
-  const ranked = orderTies(rows, 0);
-  let rank = 1;
-  for (const tied of ranked) {
-    tied.forEach((row) => {
-      row.rank = rank;
-      row.confirmed = complete && tied.length === 1;
-    });
-    rank += tied.length;
-  }
-  return { rows: ranked.flat(), complete, tied: ranked.some((set) => set.length > 1) };
-}
+let tables;
+let publishedReports = {};
 
-const tables = Object.fromEntries(groupNames.map((group) => [group, standings(group)]));
+function chooseTables() {
+  tables = Object.fromEntries(groupNames.map((group) => [group, standings(group, tournament)]));
+}
+chooseTables();
 
 function teamFor(match, side) {
-  const id = match.teams[side];
+  const id = match.teams[side] ?? publishedReports[match.id]?.teams[side];
   if (id) return { ...teams[id], id };
   const group = groupNames[side];
   const row = tables[group].rows.find((entry) => entry.rank === match.place && entry.confirmed);
@@ -107,7 +59,7 @@ function matchScore(match) {
 }
 
 function renderMatch(match) {
-  return '<div class="match"><span class="match-stage">' + stage(match) + '</span>'
+  return '<div class="match" data-match="' + match.id + '"><span class="match-stage">' + stage(match) + '</span>'
     + teamMarkup(teamFor(match, 0), "team team-left") + '<span class="score">' + matchScore(match) + '</span>'
     + teamMarkup(teamFor(match, 1), "team") + '<span class="match-status' + (match.score ? " final" : "") + '">'
     + fixtureStatus(match) + '</span></div>';
@@ -127,6 +79,10 @@ function renderMatches(filter) {
   list.innerHTML = dates.map((date) => '<article class="match-day"><h3><time datetime="' + date + '">'
     + formatDate(date, true) + '</time></h3>' + visible.filter((match) => match.date === date)
       .map(renderMatch).join("") + '</article>').join("");
+  for (const row of list.querySelectorAll("[data-match]")) {
+    const report = publishedReports[row.dataset.match];
+    if (report) row.after(window.cupPublic.details(report));
+  }
 }
 
 function renderTables() {
@@ -137,12 +93,13 @@ function renderTables() {
     const table = tables[group];
     const started = table.rows.some((row) => row.played);
     const rows = table.rows.map((row) => {
-      const rank = started ? row.rank : "–";
+      const rank = started && table.rows.filter((entry) => entry.rank === row.rank).length === 1 ? row.rank : "–";
       const diff = row.diff > 0 ? "+" + row.diff : row.diff;
       return '<tr><td>' + rank + '</td><td>'
         + '<a class="roster-link" href="rose.html#' + row.id + '" aria-label="Rosa ' + teams[row.id].name + '">'
         + teamMarkup({ ...teams[row.id], id: row.id }, "team") + '</a>'
-        + '</td><td>' + row.played + '</td><td>' + diff + '</td><td><strong>'
+        + '</td><td>' + row.played + '</td><td>' + row.wins + '</td><td>' + row.draws + '</td><td>' + row.losses
+        + '</td><td>' + row.goals + '</td><td>' + row.against + '</td><td>' + diff + '</td><td><strong>'
         + row.points + '</strong></td></tr>';
     }).join("");
     const note = table.complete && table.tied
@@ -150,6 +107,8 @@ function renderTables() {
     return '<article class="table-card"><h3 id="group-' + group + '">Girone ' + group + '</h3>'
       + '<table aria-labelledby="group-' + group + '"><thead><tr><th scope="col" aria-label="Posizione">#</th>'
       + '<th scope="col">Squadra</th><th scope="col" aria-label="Partite giocate">PG</th>'
+      + '<th scope="col" aria-label="Vittorie">V</th><th scope="col" aria-label="Pareggi">N</th><th scope="col" aria-label="Sconfitte">P</th>'
+      + '<th scope="col" aria-label="Gol fatti">GF</th><th scope="col" aria-label="Gol subiti">GS</th>'
       + '<th scope="col" aria-label="Differenza reti">DR</th><th scope="col" aria-label="Punti">Pt</th>'
       + '</tr></thead><tbody>' + rows + '</tbody></table>' + note + '</article>';
   }).join("");
@@ -195,3 +154,19 @@ document.querySelector("#share").addEventListener("click", async () => {
 renderFeature();
 renderMatches("all");
 renderTables();
+
+
+window.cupPublic.response.then((published) => {
+  if (published?.tournament !== "winter") return;
+  publishedReports = published.reports;
+  tournament.shootoutOrder = published.shootouts;
+  for (const match of matches) {
+    const result = published.results[match.id];
+    if (result) Object.assign(match, result);
+  }
+  chooseTables();
+  renderFeature();
+  renderMatches(filters.find((item) => item.getAttribute("aria-pressed") === "true")?.dataset.filter ?? "all");
+  renderTables();
+  window.cupPublic.renderStats(published, teams);
+});

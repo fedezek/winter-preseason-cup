@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organizzatori</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/competition.css">
+  <script defer src="/cup-admin.js"></script>
+</head>
+<body>
+  <header class="top"><div class="wrap bar"><a class="brand" href="/">Sito del torneo</a>
+    <nav aria-label="Organizzazione"><a id="other-cup" hidden></a><a href="/api/cup/backup">Scarica backup</a></nav>
+  </div></header>
+  <main class="wrap cup-admin">
+    <h1>Organizzatori</h1>
+    <p id="cup-context"></p>
+    <p id="admin-message" role="status" aria-live="polite">Caricamento partite…</p>
+    <form id="report-form" hidden>
+      <label>Partita<select id="fixture"></select></label>
+      <fieldset id="report-fields">
+        <legend>Referto</legend>
+        <p id="report-status"></p>
+        <div class="cup-grid" id="scores"></div>
+        <label class="cup-check"><input type="checkbox" id="discipline"> Referto disciplinare completo</label>
+        <h2>Eventi</h2>
+        <div id="events"></div>
+        <button class="cup-button cup-secondary" type="button" id="add-event">Aggiungi evento</button>
+        <div class="cup-actions">
+          <button class="cup-button cup-secondary" id="save-draft" type="submit">Salva bozza</button>
+          <button class="cup-button" id="preview" type="submit">Anteprima di pubblicazione</button>
+        </div>
+      </fieldset>
+    </form>
+    <details id="audit-section" hidden><summary>Cronologia della partita</summary><ol id="audit"></ol></details>
+    <details id="shootout-section" hidden>
+      <summary>Spareggio del girone</summary>
+      <form id="shootout-form">
+        <label>Girone<select id="shootout-group"><option>A</option><option>B</option></select></label>
+        <div class="cup-grid" id="shootout-order"></div>
+        <button class="cup-button" type="submit">Salva ordine ufficiale</button>
+      </form>
+    </details>
+    <dialog id="confirm-dialog">
+      <h2>Verifica il referto</h2>
+      <p id="preview-score"></p>
+      <p id="preview-discipline"></p>
+      <ul id="preview-events"></ul>
+      <div class="cup-actions">
+        <button class="cup-button cup-secondary" type="button" id="cancel-publish">Torna al referto</button>
+        <button class="cup-button" type="button" id="publish">Omologa e pubblica</button>
+      </div>
+    </dialog>
+  </main>
+</body>
+</html>
