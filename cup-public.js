@@ -33,9 +33,7 @@
     return link;
   }
 
-  function scoreTeam(id, team) {
-    const link = rosterLink(id, team?.name ?? id);
-    link.className = "match-sheet-team";
+  function teamCrest(id, team) {
     const tile = node("span", undefined, "match-sheet-crest");
     if (team?.crest === false) {
       tile.textContent = team.initials;
@@ -47,7 +45,13 @@
       image.width = image.height = 36;
       tile.append(image);
     }
-    link.prepend(tile);
+    return tile;
+  }
+
+  function scoreTeam(id, team) {
+    const link = rosterLink(id, team?.name ?? id);
+    link.className = "match-sheet-team";
+    link.prepend(teamCrest(id, team));
     return link;
   }
 
@@ -63,14 +67,18 @@
     return board;
   }
 
-  function eventRow(event, teams) {
+  function eventRow(event, teams, opponents) {
     const row = node("li", undefined, "match-sheet-event");
     const minute = event.minute + (event.stoppage ? "+" + event.stoppage : "") + "′";
     const [label, colour] = events[event.kind] ?? ["Evento", ""];
     const person = rosterLink(event.team, event.playerName, event.player);
     person.className = "match-sheet-player";
     const description = node("div", undefined, "match-sheet-event-description");
-    description.append(person, node("span", teams[event.team]?.name ?? event.team, "match-sheet-event-team"));
+    description.append(person);
+    if (event.kind === "own_goal") {
+      const opponent = opponents.find((id) => id !== event.team);
+      description.append(node("span", "A favore di " + (teams[opponent]?.name ?? opponent), "match-sheet-assist"));
+    }
     if (event.assistName) {
       const assist = node("div", "Assist ", "match-sheet-assist");
       assist.append(rosterLink(event.team, event.assistName, event.assist));
@@ -79,6 +87,25 @@
     row.append(node("span", minute, "match-sheet-minute"), description,
       node("span", label, "match-sheet-kind " + (colour ? "match-sheet-kind-" + colour : "")));
     return row;
+  }
+
+  function teamEvents(id, teams, opponents, events) {
+    const lane = node("div", undefined, "match-sheet-lane");
+    const title = node("h5", teams[id]?.name ?? id, "match-sheet-lane-title");
+    title.prepend(teamCrest(id, teams[id]));
+    lane.append(title);
+
+    if (!events.length) {
+      lane.classList.add("match-sheet-lane-empty");
+      lane.append(node("p", "Nessun evento.", "match-sheet-lane-note"));
+      return lane;
+    }
+
+    const list = node("ol", undefined, "match-sheet-events");
+    list.setAttribute("role", "list");
+    list.append(...events.map((event) => eventRow(event, teams, opponents)));
+    lane.append(list);
+    return lane;
   }
 
   function details(report) {
@@ -98,10 +125,12 @@
       const period = byTime.filter((event) => event.fraction === fraction);
       if (!period.length) continue;
       const group = node("section", undefined, "match-sheet-period");
-      const list = node("ol", undefined, "match-sheet-events");
-      list.setAttribute("role", "list");
-      list.append(...period.map((event) => eventRow(event, teams)));
-      group.append(node("h4", label), list);
+      const lanes = node("div", undefined, "match-sheet-lanes");
+      for (const id of report.teams) {
+        const forTeam = period.filter((event) => event.team === id);
+        lanes.append(teamEvents(id, teams, report.teams, forTeam));
+      }
+      group.append(node("h4", label), lanes);
       content.append(group);
     }
     panel.append(summary, content);
