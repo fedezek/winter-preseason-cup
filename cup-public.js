@@ -35,19 +35,30 @@
       panel.append(node("p", "Nessun evento registrato."));
       return panel;
     }
-    const list = node("ol");
+    const columns = node("div");
+    columns.style.cssText = "display:flex;flex-wrap:wrap;gap:1rem";
+    const lists = new Map();
+    for (const team of report.teams) {
+      const column = node("section");
+      column.style.cssText = "flex:1 1 14rem;min-width:0";
+      const list = node("ol");
+      lists.set(team, list);
+      column.append(node("h4", tournament.teams[team]?.name ?? team), list);
+      columns.append(column);
+    }
     for (const event of report.events) {
       const minute = event.minute + (event.stoppage ? "+" + event.stoppage : "");
       const line = node("li", event.fraction + "T " + minute + "′ · " + names[event.kind] + " · ");
       line.append(rosterLink(event.team, event.playerName, event.player));
-      if (event.kind === "own_goal") {
-        const opponent = report.teams.find((id) => id !== event.team);
-        line.append(" (a favore di ", rosterLink(opponent, tournament.teams[opponent]?.name ?? opponent), ")");
-      }
       if (event.assistName) line.append(" (assist ", rosterLink(event.team, event.assistName, event.assist), ")");
-      list.append(line);
+      const creditedTeam = event.kind === "own_goal"
+        ? report.teams.find((team) => team !== event.team) : event.team;
+      lists.get(creditedTeam).append(line);
     }
-    panel.append(list);
+    for (const list of lists.values()) {
+      if (!list.childElementCount) list.replaceWith(node("p", "Nessun evento."));
+    }
+    panel.append(columns);
     return panel;
   }
 
