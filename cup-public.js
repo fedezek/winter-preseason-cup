@@ -29,6 +29,7 @@
     const panel = node("details");
     panel.className = "cup-match-details";
     panel.append(node("summary", "Dettagli partita"));
+    if (report.events.some((event) => event.approximateMinute)) panel.append(node("p", "Minuti indicativi"));
     if (report.halfTime) panel.append(node("p", "Primo tempo " + report.halfTime.join("–")));
     if (!report.events.length) {
       panel.append(node("p", "Nessun evento registrato."));
@@ -39,6 +40,10 @@
       const minute = event.minute + (event.stoppage ? "+" + event.stoppage : "");
       const line = node("li", event.fraction + "T " + minute + "′ · " + names[event.kind] + " · ");
       line.append(rosterLink(event.team, event.playerName, event.player));
+      if (event.kind === "own_goal") {
+        const opponent = report.teams.find((id) => id !== event.team);
+        line.append(" (a favore di ", rosterLink(opponent, tournament.teams[opponent]?.name ?? opponent), ")");
+      }
       if (event.assistName) line.append(" (assist ", rosterLink(event.team, event.assistName, event.assist), ")");
       list.append(line);
     }
