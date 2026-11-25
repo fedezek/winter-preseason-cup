@@ -37,6 +37,9 @@
     .roster-team.is-selected .roster-players li { min-height: 39px; padding-block: 5px; }
     .roster-team.is-selected .roster-staff { border-top: 3px solid var(--navy-2); }
   </style>
+  <link rel="stylesheet" href="statistics.css?v=20261125">
+  <script defer src="tournament.js?v=ed246f9"></script>
+  <script defer src="statistics.js?v=20261125"></script>
 </head>
 <body>
   <a class="skip" href="#contenuto">Vai al contenuto</a>
@@ -47,7 +50,7 @@
         <span>WINTER<br>PRESEASON CUP</span>
       </a>
       <nav aria-label="Navigazione principale">
-        <a href="./#partite">Partite</a><a href="./#gironi">Gironi</a><a href="rose.html" aria-current="page">Rose</a><a href="./#info">Info</a><a href="./#contatti">Contatti</a>
+        <a href="./#partite">Partite</a><a href="./#gironi">Gironi</a><a href="rose.html" aria-current="page">Rose</a><a href="statistiche.html">Statistiche</a><a href="./#info">Info</a><a href="./#contatti">Contatti</a>
       </nav>
     </div>
   </header>
@@ -455,6 +458,10 @@
       </div>
     </article>
     </div>
+    <section class="wrap stats-team" id="statistiche" data-team-stats aria-labelledby="team-statistics-title" hidden>
+      <h2 id="team-statistics-title">Statistiche della squadra</h2>
+      <div class="stats-team-content" data-team-stats-content></div>
+    </section>
   </main>
   <footer class="footer roster-footer">
     <div class="wrap footer-row"><strong>Winter Preseason Cup</strong><span>Torino · Edizione 2026/27</span></div>
