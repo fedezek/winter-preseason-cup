@@ -214,7 +214,7 @@
     }
     const reports = Object.values(data.reports);
     const totals = leadNumbers([
-      ["Partite omologate", reports.length],
+      ["Partite disputate", reports.length],
       ["Gol segnati", reports.reduce((n, report) => n + report.score[0] + report.score[1], 0)],
       ["Assist registrati", data.stats.players.reduce((n, player) => n + player.assists, 0)],
     ]);
